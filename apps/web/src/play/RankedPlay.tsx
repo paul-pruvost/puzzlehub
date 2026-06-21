@@ -106,7 +106,13 @@ export function RankedPlay<UiState, ServerBoard, Puzzle>({
             tone={won ? 'success' : 'default'}
             className={cn('board-stage relative w-fit max-w-full overflow-hidden p-4 sm:p-5', won && 'shadow-2')}
           >
-            <div className={cn('transition-opacity', won && 'pointer-events-none select-none opacity-80')}>
+            <div
+              key={attempt}
+              className={cn(
+                'animate-pop-in transition-opacity',
+                won && 'pointer-events-none select-none opacity-80',
+              )}
+            >
               {renderBoard({
                 puzzle: play.puzzle,
                 state: play.state,

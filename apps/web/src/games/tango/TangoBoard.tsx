@@ -84,11 +84,15 @@ export function TangoBoard({
 }: TangoBoardProps): JSX.Element {
   const n = puzzle.size;
   return (
-    <div
-      className="relative inline-grid gap-1 rounded-card border border-border bg-surface-2 p-2.5 shadow-2"
-      style={{ gridTemplateColumns: `repeat(${n}, 48px)` }}
-    >
-      {board.map((row, r) =>
+    // Cadre padé EXTÉRIEUR ; la grille intérieure (sans padding) est le contexte
+    // de positionnement des marques `=`/`×` → alignement correct (sinon le padding
+    // décale les marques absolues).
+    <div className="inline-block rounded-card border border-border bg-surface-2 p-2.5 shadow-2">
+      <div
+        className="relative inline-grid gap-1"
+        style={{ gridTemplateColumns: `repeat(${n}, 48px)` }}
+      >
+        {board.map((row, r) =>
         row.map((value, c) => {
           const fixed = isGiven(puzzle, r, c);
           const bad = violations.has(cellKey(r, c));
@@ -127,9 +131,10 @@ export function TangoBoard({
           );
         }),
       )}
-      {puzzle.constraints.map((constraint, i) => (
-        <ConstraintMark key={i} constraint={constraint} n={n} />
-      ))}
+        {puzzle.constraints.map((constraint, i) => (
+          <ConstraintMark key={i} constraint={constraint} n={n} />
+        ))}
+      </div>
     </div>
   );
 }

@@ -98,7 +98,17 @@ export function TrainingShell({
         </div>
       )}
 
-      <Panel className="board-stage w-fit max-w-full overflow-auto p-4 sm:p-5">{children}</Panel>
+      <Panel
+        className={cn(
+          'board-stage w-fit max-w-full overflow-auto p-4 transition-shadow duration-300 sm:p-5',
+          status === 'valid' && 'ring-2 ring-success',
+        )}
+      >
+        {/* Entrée animée du plateau à chaque niveau (clé = index) — discret. */}
+        <div key={levelIndex} className="animate-pop-in">
+          {children}
+        </div>
+      </Panel>
 
       {status === 'valid' ? (
         <Panel tone="success" className="flex flex-wrap items-center gap-3 px-4 py-2.5" role="status">
