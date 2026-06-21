@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>puzzlehub — mini-jeux de logique</title>
+    <!-- Anti-FOUC (RF-01) : pose data-theme AVANT le premier paint. Clé alignée
+         sur THEME_STORAGE_KEY (@puzzlehub/ui). À hasher pour la future CSP (RF-12). -->
+    <script>
+      (function () {
+        try {
+          var k = 'puzzlehub-theme';
+          var p = localStorage.getItem(k);
+          if (p !== 'light' && p !== 'dark') {
+            p = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', p);
+        } catch (e) {
+          /* stockage indisponible : light par défaut */
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

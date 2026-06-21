@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  /* Motif de fond discret (points) évoquant une grille de puzzle. */
+  background-image: radial-gradient(var(--motif-dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Titres en police display (Bricolage Grotesque) avec léger resserrement. */
+.font-display {
+  letter-spacing: -0.015em;
+}
+
+/* Focus clavier visible et cohérent (RF-03, accessibilité FND-D-2). */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Respect de prefers-reduced-motion (RF-04, FND-D-2 / FND-D-10). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
