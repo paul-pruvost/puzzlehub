@@ -1,0 +1,82 @@
+// Schéma Prisma puzzlehub — persistance auth (AUTH-prisma / APRISMA-D-1..7).
+// Génération : `pnpm --filter @puzzlehub/api db:generate`
+// Migration   : `pnpm --filter @puzzlehub/api db:migrate` (nécessite DATABASE_URL + Postgres).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+model User {
+  id          String    @id @default(cuid())
+  googleSub   String    @unique
+  email       String
+  displayName String
+  avatarUrl   String?
+  role        Role      @default(user)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  sessions    Session[]
+  cosmeticSelections CosmeticSelection[]
+  offlineClears OfflineClear[]
+
+  @@index([email])
+}
+
+// Sélection de cosmétiques par utilisateur (COSM-D-3/COSM-D-5).
+// Une ligne par (user, catégorie) ; purge en cascade RGPD (FND-D-21).
+model CosmeticSelection {
+  userId     String
+  category   String
+  cosmeticId String
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, category])
+}
+
+// Progression hors-ligne par (user, jeu, difficulté) — bitmask des niveaux
+// terminés (OFLP-D-2/D-6, CORR-1). Purge en cascade RGPD (FND-D-21).
+model OfflineClear {
+  id         String   @id @default(cuid())
+  userId     String
+  game       String
+  difficulty String
+  mask       Int      @default(0)
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, game, difficulty])
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Transaction OIDC pré-login (state/nonce/verifier) — usage unique (SEC-C1/E1).
+// `id` fourni par l'application (randomToken), consommé atomiquement (APRISMA-D-4).
+model OidcTx {
+  id        String   @id
+  state     String
+  nonce     String
+  verifier  String
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}

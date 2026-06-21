@@ -1,0 +1,24 @@
+# Postgres local pour le dev (APRISMA-D-7).
+# Démarrer :  docker compose -f apps/api/docker-compose.yml up -d
+# Puis :      DATABASE_URL=... pnpm --filter @puzzlehub/api db:migrate
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: puzzlehub-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: puzzlehub
+      POSTGRES_PASSWORD: puzzlehub
+      POSTGRES_DB: puzzlehub
+    ports:
+      - '5432:5432'
+    volumes:
+      - puzzlehub-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U puzzlehub']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  puzzlehub-pg:
