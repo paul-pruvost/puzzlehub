@@ -1,0 +1,270 @@
+/**
+ * Design tokens puzzlehub — « atelier de logique » : neutres CHAUDS (papier/encre),
+ * accent indigo net + dégradé signature, profondeur en couches. Pilotés par
+ * [data-theme]. Surchargeables par les cosmétiques [data-palette]/[data-skin].
+ */
+:root,
+[data-theme='light'] {
+  /* Polices (auto-hébergées via @fontsource, cf. main.tsx). */
+  --font-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Inter Variable', Inter, system-ui, -apple-system, sans-serif;
+
+  /* Neutres chauds (papier/encre). */
+  --color-bg: #f6f4ee;
+  --color-surface: #fffdf8;
+  --color-surface-2: #efece3;
+  --color-surface-3: #e7e2d6;
+  --color-border: #e2ddd0;
+  --color-text: #1b1915;
+  --color-text-muted: #6b6557;
+
+  /* Accent indigo net + 2ᵉ teinte pour le dégradé signature (PAS de wash violet). */
+  --color-accent: #4f46e5;
+  --color-accent-2: #6366f1;
+  --color-accent-fg: #ffffff;
+  --gradient-accent: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+
+  --color-danger: #dc2626;
+  --color-success: #15803d;
+  /* Lueur de victoire (chaude, distincte de l'accent). */
+  --color-celebrate: #e0a23c;
+
+  /* Teintes douces calculées (color-mix) : suivent l'accent (donc la palette
+     cosmétique) ET le thème automatiquement → une seule définition. Servent aux
+     surbrillances de sélection/survol/erreur des plateaux (tokens, pas /opacity). */
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 14%, var(--color-surface));
+  --color-danger-soft: color-mix(in srgb, var(--color-danger) 16%, var(--color-surface));
+
+  /* Échelle d'élévation (ombres chaudes, en couches). */
+  --shadow-1: 0 1px 2px rgba(40, 33, 20, 0.05), 0 1px 3px rgba(40, 33, 20, 0.06);
+  --shadow-2: 0 2px 6px rgba(40, 33, 20, 0.06), 0 8px 20px rgba(40, 33, 20, 0.08);
+  --shadow-3: 0 12px 34px rgba(40, 33, 20, 0.12), 0 4px 10px rgba(40, 33, 20, 0.06);
+  --shadow-card: var(--shadow-1);
+
+  /* Échelle de rayons (cartes plus généreuses). */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+
+  /* Motif de fond discret (points), couleur tokenisée → s'adapte au thème. */
+  --motif-dot: rgba(27, 25, 21, 0.045);
+
+  /* Palette de jeu catégorielle daltonien-safe (Okabe-Ito désaturé, UX-D-4).
+     Teintes pastel claires en light → texte sombre lisible (--game-fg). */
+  --game-1: #fde6d2; /* orange pâle */
+  --game-2: #d6ecf5; /* bleu ciel pâle */
+  --game-3: #d6efe4; /* vert d'eau pâle */
+  --game-4: #fbf4cf; /* jaune pâle */
+  --game-5: #d9def0; /* bleu nuit pâle */
+  --game-6: #f7ddd0; /* vermillon pâle */
+  --game-7: #f4dcec; /* rose pâle */
+  --game-8: #e6e8ea; /* gris-bleu neutre */
+  --game-9: #e2ecd6; /* olive pâle */
+  --game-fg: #18181b;
+
+  /* Tokens sémantiques Tango (UX-D-6, distincts de la palette régions). */
+  --tango-sun: #f59e0b; /* ambre désaturé */
+  --tango-moon: #64748b; /* ardoise */
+}
+
+/* Cosmétiques déblocables (COSM-D-4) — appliqués via data-palette / data-skin
+   sur la racine. Purement esthétiques, désaturés (FND-D-2, no pay-to-win).
+   On surcharge AUSSI --color-accent-2 pour que --gradient-accent suive. */
+[data-palette='emerald'] {
+  --color-accent: #059669;
+  --color-accent-2: #10b981;
+  --color-accent-fg: #ffffff;
+}
+[data-theme='dark'][data-palette='emerald'] {
+  --color-accent: #10b981;
+  --color-accent-2: #34d399;
+}
+[data-palette='sunset'] {
+  --color-accent: #ea580c;
+  --color-accent-2: #f59e0b;
+  --color-accent-fg: #ffffff;
+}
+[data-theme='dark'][data-palette='sunset'] {
+  --color-accent: #fb923c;
+  --color-accent-2: #fbbf24;
+}
+[data-palette='ocean'] {
+  --color-accent: #0e7490;
+  --color-accent-2: #0891b2;
+  --color-accent-fg: #ffffff;
+}
+[data-theme='dark'][data-palette='ocean'] {
+  --color-accent: #22d3ee;
+  --color-accent-2: #38bdf8;
+}
+[data-palette='rose'] {
+  --color-accent: #be123c;
+  --color-accent-2: #e11d48;
+  --color-accent-fg: #ffffff;
+}
+[data-theme='dark'][data-palette='rose'] {
+  --color-accent: #fb7185;
+  --color-accent-2: #f472b6;
+}
+[data-palette='mono'] {
+  --color-accent: #404040;
+  --color-accent-2: #525252;
+  --color-accent-fg: #ffffff;
+}
+[data-theme='dark'][data-palette='mono'] {
+  --color-accent: #a3a3a3;
+  --color-accent-2: #d4d4d4;
+  --color-accent-fg: #18181b;
+}
+
+/* Thèmes de plateau (board-theme) — habillent le « tapis » .board-stage qui
+   entoure le plateau (TrainingShell & RankedPlay). Sélecteur attribut+classe →
+   bat l'utilitaire Tailwind bg-surface-2 du Panel. « default » = pas de règle.
+   Translucidité via color-mix/rgba (tokens sans canal alpha). */
+
+/* « Papier » : tapis crème chaud, motif fines lignes, bordure chaude. */
+[data-board-theme='paper'] .board-stage {
+  background-color: #f3ead6 !important;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 23px,
+      rgba(120, 90, 50, 0.08) 23px,
+      rgba(120, 90, 50, 0.08) 24px
+    ),
+    radial-gradient(rgba(120, 90, 50, 0.06) 1px, transparent 1px);
+  background-size:
+    100% 24px,
+    16px 16px;
+  border-color: #d8c39a !important;
+  color: #2a2418;
+  box-shadow:
+    inset 0 0 0 1px rgba(120, 90, 50, 0.12),
+    var(--shadow-2);
+}
+
+/* « Ardoise » : tapis sombre froid + grille discrète, bordure ardoise claire.
+   Volontairement sombre dans les DEUX thèmes (plateau clair sur tapis sombre). */
+[data-board-theme='slate'] .board-stage {
+  background-color: #1e293b !important;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  border-color: #475569 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(148, 163, 184, 0.12),
+    inset 0 0 24px rgba(0, 0, 0, 0.35),
+    var(--shadow-2);
+}
+
+/* Skin « glyphes » : remplace les formes Tango par des symboles ☀/☾. */
+[data-skin='glyph'] [data-piece='sun'] {
+  background: transparent !important;
+}
+[data-skin='glyph'] [data-piece='sun']::after {
+  content: '☀';
+  color: var(--tango-sun);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+[data-skin='glyph'] [data-piece='moon'] {
+  border-color: transparent !important;
+}
+[data-skin='glyph'] [data-piece='moon']::after {
+  content: '☾';
+  color: var(--tango-moon);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Skin « néon » : pièces Tango lumineuses (lueur externe en couches + jante
+   nette). Surcharge les styles INLINE des pièces → !important obligatoire.
+   Lisible sur surfaces claires comme sombres. */
+[data-skin='neon'] [data-piece='sun'] {
+  background: var(--tango-sun) !important;
+  box-shadow:
+    inset 0 0 0 1.5px color-mix(in srgb, white 75%, var(--tango-sun)),
+    0 0 6px var(--tango-sun),
+    0 0 12px color-mix(in srgb, var(--tango-sun) 70%, transparent) !important;
+}
+[data-skin='neon'] [data-piece='moon'] {
+  background: transparent !important;
+  border-color: var(--tango-moon) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, white 60%, var(--tango-moon)),
+    0 0 6px var(--tango-moon),
+    0 0 12px color-mix(in srgb, var(--tango-moon) 70%, transparent) !important;
+}
+/* Pulsation subtile, désactivée si l'utilisateur préfère moins de mouvement. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-skin='neon'] [data-piece='sun'],
+  [data-skin='neon'] [data-piece='moon'] {
+    animation: neon-pulse 2.4s ease-in-out infinite;
+  }
+}
+@keyframes neon-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.18);
+  }
+}
+
+/* Skin « rétro » : pièces Tango façon pixel-art 8-bit (coins carrés, aplat sans
+   dégradé, ombre « pixel » dure décalée). Surcharge l'inline → !important. */
+[data-skin='retro'] [data-piece='sun'] {
+  background: var(--tango-sun) !important;
+  border-radius: 2px !important;
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.35) !important;
+}
+[data-skin='retro'] [data-piece='moon'] {
+  background: transparent !important;
+  border-radius: 2px !important;
+  border-color: var(--tango-moon) !important;
+  box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme='dark'] {
+  --color-bg: #14130f;
+  --color-surface: #1c1a16;
+  --color-surface-2: #24221d;
+  --color-surface-3: #2c2924;
+  --color-border: #34302a;
+  --color-text: #f5f2ea;
+  --color-text-muted: #a8a294;
+
+  --color-accent: #6366f1;
+  --color-accent-2: #818cf8;
+  --color-accent-fg: #ffffff;
+
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+  --color-celebrate: #f5c563;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-2: 0 4px 14px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-3: 0 16px 38px rgba(0, 0, 0, 0.55), 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-card: var(--shadow-1);
+
+  --motif-dot: rgba(245, 242, 234, 0.04);
+
+  /* Palette de jeu — variante sombre profonde, texte clair lisible. */
+  --game-1: #6b4a25;
+  --game-2: #1f4a5c;
+  --game-3: #1e5040;
+  --game-4: #5e571f;
+  --game-5: #2c3360;
+  --game-6: #6a3422;
+  --game-7: #5a2c4c;
+  --game-8: #3a3d42;
+  --game-9: #3e4a2c;
+  --game-fg: #fafafa;
+
+  --tango-sun: #fbbf24;
+  --tango-moon: #94a3b8;
+}
